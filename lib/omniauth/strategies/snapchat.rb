@@ -14,6 +14,17 @@ module OmniAuth
         auth_scheme: :request_body
       }
 
+      credentials do
+        hash = {}
+        hash['token'] = access_token.token
+        hash['refresh_token'] = access_token.refresh_token if access_token.expires? && access_token.refresh_token
+        hash['expires_at'] = access_token.expires_in if access_token.expires?
+        hash['expires'] = access_token.expires?
+        refresh_token_expires_at = Time.now.to_i + access_token.params['refresh_expires_in'].to_i
+        hash['refresh_token_expires_at'] = refresh_token_expires_at
+        hash
+      end
+
       uid {
         raw_info["data"]["me"]["externalId"]
       }
